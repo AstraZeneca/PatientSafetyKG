@@ -1,0 +1,96 @@
+drug_ings - ingredients. Will look into providing mappings
+
+strata - stratification
+atc - anatomical topical codes
+
+MedRA
+pt - preferred term (common link)
+hlt - high level term
+hlgt - high level general term
+soc - system organ class
+
+pull out plain text columns
+
+- What are act1/atc1...act4/atc4?
+- What are pt, hlt, hlgt, soc?
+- What is ing? (are these drug mappings? Where are they coming from?)
+|- There seems to be no way of going from the drug to the drug mapping... unless lining up rows works out.
+- What is smq scope?
+- There is a ton of noisy data in the table ('UNKNOWN', 'Not Present', '0000-00-00', etc.). Can they clean that up?
+- How is the 'strata' column organized?
+- Allergies (=ALLERGIES) column?
+- Recovered (=RECOVD) column?
+- NUMDAYS
+
+vaers_demos_new.txt     isrid case_id gender age_grp outc_death symptom_text lab_data curr_ill history outc_life_threat outc_er_visit outc_hosp outc_prolong_hosp outc_disablity serious recv_date rpt_date age_yrs strata
+vaers_drug_header       isrid case_id vax_type tn gn route act1 act2 act3 act4 (trade name, generic name, route)
+vaers_reac_header       isrid case_id reac_vbm pt hlt hlgt soc
+vaers_ing_header        isrid case_id ing
+vaers_smq_header        isrid case_id smq_code name scope
+
+
+vigibase_demo_header : isrid case_id age_grp gender rep_type region serious outc_death outc_life_threat outc_hosp outc_disb outc_cong outc_other outc_not_conv src_phys src_pharmcst src_ohcp src_lwyr src_consumr src_other src_nurse src_hosp src_gen_practnr src_spcl_phys src_mfr src_dentist ini_rcvd_date lat_rcvd_date strata
+vigibase_drug_header   : isrid report_id tn gn route atc1 atc2 atc3 atc4 role
+vigibase_reac_header   : isrid report_id pt hlt hlgt soc outc
+vigibase_ing_header    : isrid report_id substance_name role
+vigibase_smq_header    : isrid report_id smq_code smq scope
+
+
+1.	Case.csv
+i.	CaseId (= VAERS_ID)
+ii.	PatientAge (= AGE_YRS)
+iv.	PatientGender (enum: Male, Female, Other)
+v.	PatientCondition (enum:  unknown, mild, serious, hospitalized, disabled, died. Anything that is not "mild" or "unknown" is also considered serious)
+vi.	PatientRecovered (True/False)
+vii.	ReceivedDate(= VAX_DATE)
+viii.	ReportDate (= RECVDATE)
+ix.	ConditionOnsetDate (= ONSET_DATE)
+x.	Location (= STATE, Should include country and state, if possible, since VAERS also contains some data for other countries)
+
+2.	CaseDescription
+i.	CaseId
+ii.	DescriptionText (= SYMPTOM_TEXT)
+
+3.	CaseSideEffect
+i.	CaseId
+ii.	SideEffectId (= unique id for each condition, can be UMLS id or MeSH id, for example)
+
+4.	SideEffect
+i.	SideEffectId
+ii.	SideEffect (= “reaction” in current Aris global VAERS dataset, from SYMPTOM1, SYMPTOM2, etc. in raw VAERS)
+
+5.	CaseComorbidity.csv  This file is built using a combination of LAB_DATA, ALLERGIES, CUR_ILL, and HISTORY
+i.	CaseId
+ii.	MorbidityId (= unique id for each condition, can be UMLS id or MeSH id, for example)
+
+6.	Morbidity.csv  This file is built using a combination of LAB_DATA, ALLERGIES, CUR_ILL, and HISTORY
+i.	MorbidityId
+ii.	Morbidity
+
+7.	CaseConcomitantMedication.csv 
+i.	CaseId
+ii.	MedicationId (= unique id for medication, may need external data source)
+iii.	Dosage
+
+8.	Medication.csv  This file is built using OTHER_MEDS
+i.	MedicatonId
+ii.	MedicationGenericName 
+
+9.	MedicationKnownSideEffects.csv  This is inferred data and may required integration of other data sources
+i.	MedicationId
+ii.	SideEffectid
+
+10.	CaseVaccine.csv
+i.	CaseId
+ii.	VaccineId (= unique id for vaccines, can be manually constructed but needs to remain consistent across other datasets)
+iii.	VaccineLot (= VAX_LOT)
+iv.	VaccineManufacturer (= VAX_MANU)
+v.	VaccineRoute (= VAX_ROUTE)
+vi.	VaccineSite (= VAX_SITE, should be standardized and use human readable name if possible)
+vii.	VaccineTradeName (= “trade_name” in current aris global VAERS dataset)  
+viii.	VaccineDoseSeries (= VAX_DOSE_SERIES)
+
+11.	Vaccine.csv
+i.	VaccineId
+ii.	VaccineGenericName (= VAX_NAME with trade name in brackets removed)
+iii.	VaccineType (= VAX_TYPE)

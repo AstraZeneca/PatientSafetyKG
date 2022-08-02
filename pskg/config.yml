@@ -1,0 +1,118 @@
+# Configuration File for PSKG ETL
+
+#########################################
+# Logging
+
+Logging:
+  LOG_ROOT: Logs
+  LOG_FILE: pskg_import_log.log
+
+#########################################
+# Primary input/output locations
+
+S3_Locations:
+  S3_INPUT_BUCKET: dev-1000-672-staging-eu-west-1-121484149683
+  S3_OUTPUT_BUCKET: dev-1000-672-output-eu-west-1-121484149683
+  S3_OUTPUT_KEY: box_archive
+
+#########################################
+# Exposure Data
+
+# AZ Combined Exposure Data
+AZ_Exposure:
+  KEY: CombinedExposure
+  FILE_BASE: CombinedExposure.xlsx
+
+# CDC
+CDC:
+  KEY: CDC
+  FILE_NAME: CovidVaccineAdmin_API.csv
+
+#########################################
+# Adverse Event Data
+
+# VAERS
+VAERS:
+  # All -- Combined zip file containing all years of VAERS
+  # The combined file has grown sufficiently
+  ALL_VAERS_KEY: AllVAERS
+  ALL_VAERS_FILE: AllVAERSDataCSVS.zip
+  # Individual -- VAERS files published per year
+  VAERS_KEY: VAERS
+  VAERS_FILE: VAERSData.zip
+  VAERS_DESC_KEY: VAERS_Meta
+  VAERS_DESC_FILE: vaers_vaccine_types.xlsx
+  VAERS_DATA_FILE_TYPE: VAERSDATA
+  VAERS_VACCINE_FILE_TYPE: VAERSVAX
+  VAERS_SYMPTOM_FILE_TYPE: VAERSSYMPTOMS
+
+# EUDRAVIGILANCE
+EudraVigilance:
+  KEY: EudraVigilance
+  # EV Data Source: EVDAS or Public (https://dap.ema.europa.eu/analytics/saw.dll?PortalPages)
+  EV_SOURCE: Public
+
+#########################################
+# MedDRA Ontology Files
+MedDRA:
+  KEY: MedDRA
+  VERSION: v24.0
+  PT_FILE: pt.asc
+  LLT_FILE: llt.asc
+  HIER_FILE: mdhier.asc
+  HLT_FILE: hlt.asc
+  HLT_PT_FILE: hlt_pt.asc
+  HLGT_FILE: hlgt.asc
+  HLGT_HLT_FILE: hlgt_hlt.asc
+  SOC_FILE: soc.asc
+  SOC_HLGT_FILE: soc_hlgt.asc
+  SMQ_LIST_FILE: smq_list.asc
+  SMQ_CONTENT_FILE: smq_content.asc
+
+#########################################
+# MedDRA Custom Queries (input)
+# Note: different location for aibench vs. local testing
+MedDRACQ:
+  aibench: SageMaker/meddra-custom-queries
+  local: meddra-custom-queries
+
+#########################################
+# Geocoding
+Geocoding:
+  KEY: ref_data
+  CONTINENTS_FILE: continents2.csv
+  COUNTRIES_FILE: country_data.csv
+
+#########################################
+# Output Files
+
+# Nodes
+Nodes:
+  CASE_FILENAME: Case.tsv
+  VACCINE_FILENAME: Vaccine.tsv
+  MEDICATION_FILENAME: Medication.tsv
+  COUNTRY_FILENAME: Country.tsv
+  CONTINENT_FILENAME: Continent.tsv
+  EXPOSURE_FILENAME: ExposureData.tsv
+  MEDDRACQ_META_FILE: MeddraCq.tsv
+  MEDDRA_TERM_FILENAME: MeddraTerm.tsv
+  MEDDRA_SMQ_FILENAME: MeddraSmq.tsv
+  CASEGROUP_FILENAME: CaseGroup.tsv
+
+# Edges
+Edges:
+  PRESCRIBED_FILENAME: CasePrescribedMedication.tsv
+  ADMINISTERED_FILENAME: CaseAdministeredVaccine.tsv
+  HAS_HISTORY_FILENAME: CaseHasHistoryOfMeddraTerm.tsv
+  REPORTED_FROM_FILENAME: CaseReportedFromCountry.tsv
+  REPORTED_AE_FILENAME: CaseReportedAEMeddraTerm.tsv
+  VACCINE_KNOWN_SIDE_EFFECT_FILENAME: VaccineHasKnownSideEffect.tsv
+  MEDICATION_KNOWN_SIDE_EFFECT_FILENAME: MedicationHasKnownSideEffect.tsv
+  COUNTRY_IN_CONTINENT_FILENAME: CountryInContinent.tsv
+  COUNTRY_HAS_EXPOSURE_FILENAME: CountryHasExposureData.tsv
+  VACCINE_HAS_EXPOSURE_FILENAME: VaccineHasExposureData.tsv
+  MEDDRACQ_LINKS_FILE: MeddraCqLinks.tsv
+  MEDDRA_ONTOLOGY_FILENAME: MeddraOntology.tsv
+  MEDDRA_SMQ_TERM_LINK_FILENAME: MeddraSmqContainsTerm.tsv
+  MEDDRA_SMQ_SMQ_LINK_FILENAME: MeddraSmqContainsSmq.tsv
+  CONTAINS_CASE_FILENAME: ContainsCase.tsv
